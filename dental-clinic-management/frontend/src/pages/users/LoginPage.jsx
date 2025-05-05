@@ -1,63 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
-import { useNavigate } from "react-router-dom";
-
+import useLogin from '../../hooks/useLogin';
 
 const LoginPage = () => {
-  const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    id: '',
-    username: '',
-    password: '',
-    rememberMe: false
-  });
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === 'checkbox' ? checked : value
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-  
-    try {
-      const response = await fetch('http://localhost:8080/dental-clinic/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: formData.username,
-          id: formData.id,
-          password: formData.password,
-        }),
-      });
-  
-      const data = await response.json();
-      if (response.ok) {
-        alert("Đăng nhập thành công!");
-      
-        // Giả sử response trả về token và user
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-        localStorage.setItem("username", data.user.username);
-        localStorage.setItem("id", data.user.id);
-      
-        navigate("/");
-      } else {
-        alert(data.error || "Đăng nhập thất bại!");
-      }
-    } catch (error) {
-      console.error("Lỗi:", error);
-      alert("Lỗi kết nối đến server!");
-    }
-  };
-  
+  const { formData, showPassword, setShowPassword, handleChange, handleSubmit, loading, error } = useLogin();
 
   return (
     <div className="min-h-screen bg-dental-blue flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -75,6 +22,8 @@ const LoginPage = () => {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          {error && <div className="mb-4 text-red-600 text-sm">{error}</div>}
+          {loading && <div className="mb-4 text-gray-600 text-sm">Đang xử lý...</div>}
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Username Field */}
             <div>
@@ -110,7 +59,7 @@ const LoginPage = () => {
                 <input
                   id="password"
                   name="password"
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   required
                   value={formData.password}
                   onChange={handleChange}
@@ -161,14 +110,15 @@ const LoginPage = () => {
             <div>
               <button
                 type="submit"
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-md text-base font-semibold text-white my-global-btn hover:bg-green-600 transition duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400"
+                disabled={loading}
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-md text-base font-semibold text-white my-global-btn hover:bg-green-600 transition duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400 disabled:opacity-50"
               >
-                Đăng nhập
+                {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
               </button>
             </div>
           </form>
 
-          {/* Social Login (Không cần chỉnh nếu không dùng email) */}
+          {/* Social Login */}
           <div className="mt-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
@@ -181,7 +131,6 @@ const LoginPage = () => {
               </div>
             </div>
 
-            {/* Facebook + Google */}
             <div className="mt-6 grid grid-cols-2 gap-3">
               <div>
                 <a href="#" className="w-full flex justify-center items-center py-3 px-4 border border-gray-300 rounded-xl shadow-sm text-sm font-semibold text-gray-700 bg-white hover:bg-dental-light transition duration-150">
