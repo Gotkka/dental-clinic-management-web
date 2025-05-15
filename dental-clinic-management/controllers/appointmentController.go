@@ -3,8 +3,10 @@ package controllers
 import (
 	"dental-clinic-management/config"
 	"dental-clinic-management/models"
+	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -108,7 +110,7 @@ func GetCancelledAppointments(c *gin.Context) {
 }
 
 func GetAppointmentByID(c *gin.Context) {
-	id := c.Param("id") // Lấy id từ URL param
+	id := c.Param("id")
 
 	var appointment models.Appointment
 
@@ -116,6 +118,7 @@ func GetAppointmentByID(c *gin.Context) {
 		Debug().
 		Preload("Dentist").
 		Preload("Dentist.Specialization").
+		Preload("Dentist.BranchClinic").
 		Preload("Service").
 		Preload("Patient").
 		Preload("AppointmentType").
@@ -126,4 +129,62 @@ func GetAppointmentByID(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, appointment)
+}
+
+func GetExistingAppointments(c *gin.Context) {
+	// Lấy tham số từ query
+	dentistID := c.Query("dentist_id")
+	startDateStr := c.Query("start_date")
+	endDateStr := c.Query("end_date")
+
+	// Xử lý múi giờ Asia/Ho_Chi_Minh (+07:00)
+	loc, err := time.LoadLocation("Asia/Ho_Chi_Minh")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Không thể tải múi giờ"})
+		return
+	}
+
+	// Parse startDate và endDate với múi giờ +07:00
+	var startDate, endDate time.Time
+	if startDateStr != "" {
+		startDate, err = time.ParseInLocation("2006-01-02", startDateStr, loc)
+		if err != nil {
+			startDate = time.Now().In(loc)
+		}
+	} else {
+		startDate = time.Now().In(loc)
+	}
+
+	if endDateStr != "" {
+		endDate, err = time.ParseInLocation("2006-01-02", endDateStr, loc)
+		if err != nil {
+			endDate = startDate.AddDate(0, 0, 7)
+		}
+	} else {
+		endDate = startDate.AddDate(0, 0, 7)
+	}
+
+	endDate = time.Date(endDate.Year(), endDate.Month(), endDate.Day(), 0, 0, 0, 0, loc).AddDate(0, 0, 1)
+
+	c.Request.Header.Set("X-Start-Date", startDate.String())
+	c.Request.Header.Set("X-End-Date", endDate.String())
+
+	var appointments []models.Appointment
+	query := config.DB.Where("appointment_time >= ? AND appointment_time < ?", startDate, endDate).
+		Where("status IN ?", []string{"Đang chờ", "Xác nhận"})
+	if dentistID != "" {
+		query = query.Where("dentist_id = ?", dentistID)
+	}
+
+	if err := query.Find(&appointments).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Không thể lấy danh sách lịch hẹn"})
+		return
+	}
+
+	c.Request.Header.Set("X-Appointment-Count", fmt.Sprintf("%d", len(appointments)))
+	for i, appt := range appointments {
+		c.Request.Header.Set(fmt.Sprintf("X-Appointment-%d", i), fmt.Sprintf("ID: %d, Time: %s, DentistID: %d, Status: %s", appt.ID, appt.AppointmentTime.String(), appt.DentistID, appt.Status))
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": appointments})
 }

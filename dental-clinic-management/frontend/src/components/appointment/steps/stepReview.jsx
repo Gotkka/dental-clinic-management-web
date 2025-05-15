@@ -1,7 +1,9 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 import { Calendar, User, FileText, Briefcase } from 'lucide-react';
 
-const StepReview = ({ appointmentData, specialization }) => {
+const StepReview = ({ appointmentData, specializations = [] }) => {
+  console.log('StepReview Data:', { appointmentData, specializations });
+
   return (
     <div>
       <h2 className="text-xl font-semibold mb-6">Xem Lại Lịch Hẹn</h2>
@@ -12,12 +14,14 @@ const StepReview = ({ appointmentData, specialization }) => {
           <div>
             <h3 className="font-medium">Ngày & Giờ</h3>
             <p className="text-gray-700">
-              {appointmentData.date ? new Date(appointmentData.date).toLocaleDateString('vi-VN', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              }) : ''}
+              {appointmentData.date
+                ? new Date(appointmentData.date).toLocaleDateString('vi-VN', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })
+                : ''}
               {appointmentData.time ? ` lúc ${appointmentData.time}` : ''}
             </p>
           </div>
@@ -27,15 +31,9 @@ const StepReview = ({ appointmentData, specialization }) => {
           <User size={20} className="mr-3 text-blue-600 flex-shrink-0 mt-1" />
           <div>
             <h3 className="font-medium">Bác sĩ</h3>
-            <p className="text-gray-700">
-              {appointmentData.dentist?.full_name || ''}
-            </p>
+            <p className="text-gray-700">{appointmentData.dentist?.full_name || ''}</p>
             <p className="text-sm text-gray-600">
-              {
-                specialization.find(
-                  (s) => s.id === appointmentData.dentist?.specialization_id
-                )?.name || ''
-              }
+              {specializations.find((s) => s.id === appointmentData.dentist?.specialization_id)?.name || ''}
             </p>
           </div>
         </div>
@@ -44,15 +42,13 @@ const StepReview = ({ appointmentData, specialization }) => {
           <Briefcase size={20} className="mr-3 text-blue-600 flex-shrink-0 mt-1" />
           <div>
             <h3 className="font-medium">Dịch vụ</h3>
-            <p className="text-gray-700">
-              {appointmentData.service?.name || ''}
-            </p>
-            <p className="text-sm text-gray-600">
-              {appointmentData.service?.duration || ''} phút
-            </p>
+            <p className="text-gray-700">{appointmentData.service?.name || ''}</p>
+            <p className="text-sm text-gray-600">{appointmentData.service?.duration || ''} phút</p>
             <p className="text-sm font-medium text-blue-600">
               {appointmentData.service?.price
-                ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(appointmentData.service.price)
+                ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(
+                    appointmentData.service.price
+                  )
                 : ''}
             </p>
           </div>
@@ -62,9 +58,7 @@ const StepReview = ({ appointmentData, specialization }) => {
           <FileText size={20} className="mr-3 text-blue-600 flex-shrink-0 mt-1" />
           <div>
             <h3 className="font-medium">Loại Cuộc Hẹn</h3>
-            <p className="text-gray-700">
-              {appointmentData.appointmentType?.name || ''}
-            </p>
+            <p className="text-gray-700">{appointmentData.appointmentType?.name || ''}</p>
           </div>
         </div>
 
@@ -72,7 +66,9 @@ const StepReview = ({ appointmentData, specialization }) => {
           <User size={20} className="mr-3 text-blue-600 flex-shrink-0 mt-1" />
           <div>
             <h3 className="font-medium">Thông Tin Bệnh Nhân</h3>
-            <p className="text-gray-700">{appointmentData.firstName} {appointmentData.lastName}</p>
+            <p className="text-gray-700">
+              {appointmentData.firstName} {appointmentData.lastName}
+            </p>
             <p className="text-sm text-gray-600">{appointmentData.email}</p>
             <p className="text-sm text-gray-600">{appointmentData.phone}</p>
             {appointmentData.isNewPatient && (
@@ -85,12 +81,52 @@ const StepReview = ({ appointmentData, specialization }) => {
       <div className="text-sm text-gray-600 mb-6">
         <p>
           Bằng cách xác nhận lịch hẹn này, bạn đồng ý với{' '}
-          <a href="#" className="black-text-link hover:underline">Điều khoản Dịch vụ</a> và{' '}
-          <a href="#" className="black-text-link hover:underline">Chính sách Bảo mật</a>.
+          <a href="#" className="black-text-link hover:underline">
+            Điều khoản Dịch vụ
+          </a>{' '}
+          và{' '}
+          <a href="#" className="black-text-link hover:underline">
+            Chính sách Bảo mật
+          </a>
+          .
         </p>
       </div>
     </div>
   );
+};
+
+StepReview.propTypes = {
+  appointmentData: PropTypes.shape({
+    date: PropTypes.string,
+    time: PropTypes.string,
+    dentist: PropTypes.shape({
+      full_name: PropTypes.string,
+      specialization_id: PropTypes.number,
+    }),
+    service: PropTypes.shape({
+      name: PropTypes.string,
+      duration: PropTypes.number,
+      price: PropTypes.number,
+    }),
+    appointmentType: PropTypes.shape({
+      name: PropTypes.string,
+    }),
+    firstName: PropTypes.string,
+    lastName: PropTypes.string,
+    email: PropTypes.string,
+    phone: PropTypes.string,
+    isNewPatient: PropTypes.bool,
+  }).isRequired,
+  specializations: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
+    })
+  ),
+};
+
+StepReview.defaultProps = {
+  specializations: [],
 };
 
 export default StepReview;

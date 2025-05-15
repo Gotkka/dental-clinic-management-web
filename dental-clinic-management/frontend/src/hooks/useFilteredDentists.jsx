@@ -1,16 +1,27 @@
 import { useState, useMemo } from 'react';
 import useDentists from './useDentists';
+import useSpecializations from './useSpecializations';
 
 const useFilteredDentists = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSpecialty, setSelectedSpecialty] = useState('Tất cả');
-  const { dentists, specializations, loading, error } = useDentists();
+  const { dentists, loading: dentistsLoading, error: dentistsError } = useDentists();
+  const { specializations, isLoading: specLoading, error: specError } = useSpecializations();
 
-  const specialtyNames = useMemo(() => ['Tất cả', ...specializations.map(s => s.name)], [specializations]);
+  // Gộp trạng thái loading và error
+  const loading = dentistsLoading || specLoading;
+  const error = dentistsError || specError;
+
+  // Ensure specializations is an array before mapping over it
+  const specialtyNames = useMemo(
+    () => ['Tất cả', ...(Array.isArray(specializations) ? specializations.map(s => s.name) : [])],
+    [specializations]
+  );
 
   const filteredDoctors = useMemo(() => {
+    const safeSpecializations = Array.isArray(specializations) ? specializations : [];
     return dentists.filter((doctor) => {
-      const spec = specializations.find(s => s.id === doctor.specialization_id);
+      const spec = safeSpecializations.find(s => s.id === doctor.specialization_id) || null;
       const fullName = doctor.full_name?.toLowerCase() || '';
       const specName = spec?.name?.toLowerCase() || '';
 

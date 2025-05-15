@@ -71,9 +71,9 @@ const Dentists = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredDoctors.length > 0 ? (
                 filteredDoctors.map((doctor) => {
-                  const specialization = specializations.find(
-                    (s) => s.id === doctor.specialization_id
-                  );
+                  const specialization = Array.isArray(specializations)
+                    ? specializations.find((s) => s.id === doctor.specialization_id) || null
+                    : null;
 
                   return (
                     <DentistCard

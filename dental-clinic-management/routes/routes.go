@@ -29,7 +29,8 @@ func SetupRoutes() *gin.Engine {
 
 		dentalClinic.GET("/appointment-types", controllers.GetAllAppointmentTypes) // Lấy danh sách loại lịch hẹn
 
-		dentalClinic.POST("/create-patient-information", controllers.CreateNewPatientInformation) // Tạo thông tin bệnh nhân
+		dentalClinic.GET("/patient-informations", controllers.GetAllPatientInformations)           // Lấy danh sách thông tin bệnh nhân
+		dentalClinic.POST("/patient-informations/create", controllers.CreateNewPatientInformation) // Tạo thông tin bệnh nhân
 
 		dentalClinic.GET("/appointments", controllers.GetAllAppointments) // Lấy danh sách lịch hẹn nha khoa
 
@@ -38,8 +39,12 @@ func SetupRoutes() *gin.Engine {
 
 		dentalClinic.GET("/appointments/cancelled", controllers.GetCancelledAppointments)
 
-		dentalClinic.GET("/appointments/:id", controllers.GetAppointmentByID)   // Lấy lịch hẹn theo ID
-		dentalClinic.POST("/create-appointment", controllers.CreateAppointment) // Tạo lịch hẹn nha khoa
+		dentalClinic.GET("/appointments/:id", controllers.GetAppointmentByID)                // Lấy lịch hẹn theo ID
+		dentalClinic.POST("/appointments/create-appointment", controllers.CreateAppointment) // Tạo lịch hẹn nha khoa
+
+		dentalClinic.GET("/branchs", controllers.GetAllBranches) // Lấy danh sách chi nhánh nha khoa
+
+		dentalClinic.GET("/appointments/existing", controllers.GetExistingAppointments) // Lấy danh sách lịch hẹn đã tồn tại")
 	}
 
 	return r

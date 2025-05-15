@@ -1,31 +1,35 @@
-// services/bookAppointmentService.js
-
-import axios from 'axios';
-
-const API_BASE_URL = 'http://localhost:8080/dental-clinic';
+import { appointmentTypeService } from './appointmentTypeService';
+import { dentistService } from './dentistService';
+import { patientService } from './patientService';
+import { specializationService } from './specializationService';
+import { serviceService } from './serviceService';
+import { branchClinicService } from './branchClinicService';
 
 export const fetchAllData = async () => {
   try {
     const [
-      dentistsResponse, 
-      specializationsResponse, 
-      servicesResponse, 
-      appointmentTypesResponse, 
-      patientsResponse
+      dentistsResponse,
+      specializationsResponse,
+      servicesResponse,
+      appointmentTypesResponse,
+      patientsResponse,
+      branchsResponse,
     ] = await Promise.all([
-      axios.get(`${API_BASE_URL}/dentists`),
-      axios.get(`${API_BASE_URL}/specializations`),
-      axios.get(`${API_BASE_URL}/services`),
-      axios.get(`${API_BASE_URL}/appointment-types`),
-      axios.get(`${API_BASE_URL}/patients`)
+      dentistService(),
+      specializationService(),
+      serviceService(),
+      appointmentTypeService(),
+      patientService(),
+      branchClinicService(),
     ]);
-    
+
     return {
-      dentists: dentistsResponse.data,
-      specializations: specializationsResponse.data,
-      services: servicesResponse.data,
-      appointmentTypes: appointmentTypesResponse.data,
-      patients: patientsResponse.data
+      dentists: dentistsResponse.data || dentistsResponse, // Xử lý trường hợp không có data
+      specializations: specializationsResponse.data || specializationsResponse,
+      services: servicesResponse.data || servicesResponse,
+      appointmentTypes: appointmentTypesResponse.data || appointmentTypesResponse,
+      patients: patientsResponse.data || patientsResponse,
+      branchs: branchsResponse.data || branchsResponse,
     };
   } catch (error) {
     console.error('Lỗi khi lấy dữ liệu:', error);
@@ -33,28 +37,3 @@ export const fetchAllData = async () => {
   }
 };
 
-export const createPatientInformation = async (patientInfo) => {
-  try {
-    const { data } = await axios.post(
-      `${API_BASE_URL}/create-patient-information`,
-      patientInfo
-    );
-    return data;
-  } catch (error) {
-    console.error('Lỗi khi tạo thông tin bệnh nhân:', error);
-    throw error;
-  }
-};
-
-export const createAppointment = async (appointmentData) => {
-  try {
-    const response = await axios.post(
-      `${API_BASE_URL}/create-appointment`,
-      appointmentData
-    );
-    return response.data;
-  } catch (error) {
-    console.error('Lỗi khi tạo cuộc hẹn:', error);
-    throw error;
-  }
-};

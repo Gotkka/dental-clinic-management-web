@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getAppointments } from '../services/appointmentService'; 
+import { getAppointments, createAppointment } from '../services/appointmentService'; 
 
 export default function useAppointments() {
     const [appointments, setAppointments] = useState([]);
@@ -25,4 +25,26 @@ export default function useAppointments() {
     }, []);
 
     return { appointments, loading, error };
+}
+
+export function useCreateAppointment() {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const createNewAppointment = async (appointmentData) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await createAppointment(appointmentData);
+            console.log("Appointment created successfully:", response);
+            return response;
+        } catch (err) {
+            setError(err);
+            console.error('Lỗi khi tạo cuộc hẹn:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return { createNewAppointment, loading, error };
 }

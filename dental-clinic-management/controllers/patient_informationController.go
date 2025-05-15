@@ -9,6 +9,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func GetAllPatientInformations(c *gin.Context) {
+	var patientInfo []models.PatientInformation
+
+	// Lấy tất cả thông tin bệnh nhân từ cơ sở dữ liệu
+	if err := config.DB.Find(&patientInfo).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"Lỗi": "Không thể lấy thông tin bệnh nhân"})
+		return
+	}
+
+	c.JSON(http.StatusOK, patientInfo)
+}
+
 func CreateNewPatientInformation(c *gin.Context) {
 	var patientInfo models.PatientInformation
 
@@ -21,6 +33,12 @@ func CreateNewPatientInformation(c *gin.Context) {
 	// Save the new patient information to the database
 	if err := config.DB.Create(&patientInfo).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"Lỗi": "Không thể tạo thông tin bệnh nhân"})
+		return
+	}
+
+	// Log the created patient information
+	if patientInfo.ID == 0 {
+		c.JSON(http.StatusInternalServerError, gin.H{"Lỗi": "ID không được tạo. Vui lòng kiểm tra cơ sở dữ liệu."})
 		return
 	}
 
