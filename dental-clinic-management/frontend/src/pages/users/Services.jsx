@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowRight, Clock, Shield, Zap, Star, Headphones } from 'lucide-react';
-import Layout from '../components/layout/Layout';
+import Layout from '../../layouts/Layout';
 
 const Services = () => {
   const services = [

@@ -2,11 +2,10 @@
 import React from "react";
 import { Link } from 'react-router-dom';
 import { FaCalendarAlt, FaUserMd, FaClipboardList, FaInfoCircle } from 'react-icons/fa';
-import '../css/HomePage.css'; 
-import Layout from '../components/layout/Layout';
-import dental_cleaning from '../assets/dental-cleaning.png';
-import dental_implants from '../assets/dental-implants.png';
-import teeth_whiteing from '../assets/teeth-whitening.png';
+import '../../css/HomePage.css';
+
+import Layout from '../../layouts/Layout';
+
 
 const HomePage = () => {
 
@@ -30,7 +29,7 @@ const HomePage = () => {
                   </div>
                 </div>
                 <div className="md:w-1/2">
-                  <img src="./src/assets/low-cost-dental-care.png" alt="Dental Clinic" className="w-2/3" />
+                  <img src="/assets/images/low-cost-dental-care.png" alt="Dental Care" className="w-2/3" />
                 </div>
               </div>
             </div>
@@ -77,7 +76,7 @@ const HomePage = () => {
               <h2 className="text-3xl font-bold text-center mb-12">Dịch vụ nha khoa của chúng tôi</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="bg-white rounded-lg overflow-hidden shadow-md">
-                  <img src={dental_cleaning} alt="Dental Cleaning" className="w-full h-48 object-cover" />
+                  <img src="/assets/images/dental-cleaning.png" alt="Dental Cleaning" className="w-full h-48 object-cover" />
                   <div className="p-6">
                     <h3 className="text-xl font-bold mb-2">Vệ sinh và chăm sóc răng miệng</h3>
                     <p className="text-gray-600 mb-4">Dịch vụ vệ sinh răng miệng chuyên nghiệp giúp ngăn ngừa sâu răng và bệnh nướu</p>
@@ -85,7 +84,7 @@ const HomePage = () => {
                   </div>
                 </div>
                 <div className="bg-white rounded-lg overflow-hidden shadow-md">
-                  <img src={dental_implants}  alt="Dental Implants" className="w-full h-48 object-cover" />
+                  <img src="/assets/images/dental-implants.png" alt="Dental Implants" className="w-full h-48 object-cover" />
                   <div className="p-6">
                     <h3 className="text-xl font-bold mb-2">Cấy ghép implant</h3>
                     <p className="text-gray-600 mb-4">Giải pháp thay thế răng mất vĩnh viễn với công nghệ hiện đại</p>
@@ -93,7 +92,7 @@ const HomePage = () => {
                   </div>
                 </div>
                 <div className="bg-white rounded-lg overflow-hidden shadow-md">
-                  <img src={teeth_whiteing}  alt="Teeth Whitening" className="w-full h-48 object-cover" />
+                  <img src="/assets/images/teeth-whitening.png" alt="Teeth Whitening" className="w-full h-48 object-cover" />
                   <div className="p-6">
                     <h3 className="text-xl font-bold mb-2">Tẩy trắng răng</h3>
                     <p className="text-gray-600 mb-4">Phương pháp làm trắng răng an toàn và hiệu quả cho nụ cười rạng rỡ</p>

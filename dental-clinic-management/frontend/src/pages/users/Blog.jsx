@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Calendar, Clock, ChevronRight, User } from 'lucide-react';
-import Layout from '../components/layout/Layout';
+import Layout from '../../layouts/Layout';
 
 const Blog = () => {
   const [activeCategory, setActiveCategory] = useState('Tất cả');
