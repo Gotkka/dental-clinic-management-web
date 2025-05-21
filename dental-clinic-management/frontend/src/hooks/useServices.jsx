@@ -1,10 +1,9 @@
-import { serviceService } from '../services/serviceService';
+import { getServices } from '../services/serviceService';
 import useFetchData from './useFetchData';
 
 const useServices = () => {
-  const { data: services, isLoading, error } = useFetchData(serviceService);
-
-  return { services, isLoading, error };
+  const { data: services, isLoading, error, refetch } = useFetchData(getServices);
+  return { services, isLoading, error, refetch };
 };
 
 export default useServices;

@@ -1,10 +1,34 @@
-import { branchClinicService } from '../services/branchClinicService';
-import useFetchData from './useFetchData';
+import { useState, useEffect } from "react";
+import {
+  getBranches,
+  // createBranch as createBranchService,
+  // updateBranch as updateBranchService,
+  // deleteBranch as deleteBranchService,
+} from "../services/branchClinicService";
 
-const useBranchClinics = () => {
-  const { data: branchClinics, isLoading, error } = useFetchData(branchClinicService);
+export function useBranches() {
+  const [branches, setBranches] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  return { branchClinics, isLoading, error };
-};
+  const fetchBranches = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getBranches();
+      setBranches(Array.isArray(data) ? data : []);
+    } catch (err) {
+      setError(err);
+      setBranches([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-export default useBranchClinics;
+  useEffect(() => {
+    fetchBranches();
+  }, []);
+
+  return { branches, loading, error, refetch: fetchBranches };
+}
+

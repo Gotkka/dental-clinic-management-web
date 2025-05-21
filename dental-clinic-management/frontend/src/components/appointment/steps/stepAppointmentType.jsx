@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Calendar } from 'react-feather';
 
-const StepAppointmentType = ({ appointmentTypes = [], appointmentData = {}, onChange }) => {
+const StepAppointmentType = ({ appointmentTypes = [], value, onChange }) => {
   if (!appointmentTypes || !Array.isArray(appointmentTypes) || appointmentTypes.length === 0) {
     return (
       <div className="bg-white p-6 rounded-lg shadow-sm text-center text-gray-500">
@@ -36,21 +36,23 @@ const StepAppointmentType = ({ appointmentTypes = [], appointmentData = {}, onCh
 
       <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
         {appointmentTypes.map((type) => {
-          const isSelected = appointmentData?.appointmentType?.id === type.id;
-
+          const isSelected = value?.id === type.id;
           return (
             <div
               key={type.id}
               role="button"
               aria-selected={isSelected}
               tabIndex={0}
-              onClick={() => onChange(type)}
+              onClick={() => onChange('appointmentType', type)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') onChange(type);
+                if (e.key === 'Enter' || e.key === ' ') onChange('appointmentType', type);
               }}
-              className={`border rounded-lg p-4 cursor-pointer transition-all hover:shadow-md flex flex-col ${
-                isSelected ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-200 hover:border-blue-300'
-              }`}
+              className={`border rounded-lg p-4 cursor-pointer transition-all hover:shadow-md flex flex-col relative
+                ${isSelected
+                  ? 'border-blue-500 ring-2 ring-blue-200 scale-105 shadow-lg bg-blue-50'
+                  : 'border-gray-200 hover:border-blue-300 bg-white'}
+              `}
+              style={{ transition: 'all 0.2s cubic-bezier(.4,2,.6,1)' }}
             >
               <div className="flex items-center">
                 <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
@@ -60,9 +62,12 @@ const StepAppointmentType = ({ appointmentTypes = [], appointmentData = {}, onCh
                   <h3 className="font-semibold text-gray-800">{type.name}</h3>
                   <p className="text-sm text-gray-600">Mô tả: {type.description || 'Không có mô tả'}</p>
                 </div>
-
+                {/* Tick xanh hiệu ứng nổi bật khi chọn */}
                 {isSelected && (
-                  <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center">
+                  <div
+                    className="absolute top-2 right-2 w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center transition-transform duration-300 scale-125 shadow-lg animate-bounce z-10"
+                    style={{ boxShadow: '0 0 0 3px #3b82f6' }}
+                  >
                     <svg
                       className="w-4 h-4 text-white"
                       xmlns="http://www.w3.org/2000/svg"
@@ -94,17 +99,15 @@ StepAppointmentType.propTypes = {
       description: PropTypes.string,
     })
   ),
-  appointmentData: PropTypes.shape({
-    appointmentType: PropTypes.shape({
-      id: PropTypes.number,
-    }),
+  value: PropTypes.shape({
+    id: PropTypes.number,
   }),
   onChange: PropTypes.func.isRequired,
 };
 
 StepAppointmentType.defaultProps = {
   appointmentTypes: [],
-  appointmentData: {},
+  value: null,
 };
 
 export default StepAppointmentType;

@@ -1,41 +1,42 @@
 // Tạo danh sách ngày khả dụng
 export const getAvailableDates = () => {
-    const dates = [];
-    const today = new Date();
+  const dates = [];
+  const today = new Date();
 
-    for (let i = 1; i <= 14; i++) {
-        const nextDate = new Date(today);
-        nextDate.setDate(today.getDate() + i);
+  for (let i = 1; i <= 14; i++) {
+    const nextDate = new Date(today);
+    nextDate.setDate(today.getDate() + i);
 
-        if (nextDate.getDay() !== 0) { // Bỏ qua Chủ nhật
-            dates.push({
-                date: nextDate.toISOString().split('T')[0],
-                dayName: nextDate.toLocaleDateString('vi-VN', { weekday: 'short' }),
-                dayNumber: nextDate.getDate(),
-                month: nextDate.toLocaleDateString('vi-VN', { month: 'short' })
-            });
-        }
+    if (nextDate.getDay() !== 0) { // Bỏ qua Chủ nhật
+      dates.push({
+        date: nextDate.toISOString().split('T')[0],
+        dayName: nextDate.toLocaleDateString('vi-VN', { weekday: 'short' }),
+        dayNumber: nextDate.getDate(),
+        month: nextDate.toLocaleDateString('vi-VN', { month: 'short' })
+      });
     }
+  }
 
-    return dates;
+  return dates;
 };
 
 // Tạo danh sách khung giờ
 export const getTimeSlots = () => {
-    const slots = [];
-    const startHour = 9;
-    const endHour = 17;
+  const slots = [];
+  const startHour = 9;
+  const endHour = 17;
 
-    for (let hour = startHour; hour < endHour; hour++) {
-        const isPM = hour >= 12;
-        const displayHour = hour > 12 ? hour - 12 : hour;
+  for (let hour = startHour; hour < endHour; hour++) {
+    const isPM = hour >= 12;
+    const displayHour = hour > 12 ? hour - 12 : hour;
 
-        slots.push(`${displayHour}:00 ${isPM ? 'Chiều' : 'Sáng'}`);
-        slots.push(`${displayHour}:30 ${isPM ? 'Chiều' : 'Sáng'}`);
-    }
+    slots.push(`${displayHour}:00 ${isPM ? 'Chiều' : 'Sáng'}`);
+    slots.push(`${displayHour}:30 ${isPM ? 'Chiều' : 'Sáng'}`);
+  }
 
-    return slots;
+  return slots;
 };
+
 
 // Chuyển đổi thời gian từ định dạng 12h sang 24h
 export const convertTo24HourTime = (timeStr) => {
@@ -68,5 +69,17 @@ export const formatDate = (dateString) => {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
+    });
+};
+
+// Format ngày + giờ theo định dạng Việt Nam
+export const formatDateTime = (dateString) => {
+    if (!dateString) return '';
+    return new Date(dateString).toLocaleString('vi-VN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
     });
 };

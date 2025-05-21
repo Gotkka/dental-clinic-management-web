@@ -11,8 +11,7 @@ const useFetchData = (fetchFunction) => {
       const result = await fetchFunction();
       setData(result);
       setError(null);
-    } catch (err) {
-      console.error('Lỗi khi fetch dữ liệu:', err);
+    } catch {
       setError('Không thể tải dữ liệu. Vui lòng thử lại sau.');
     } finally {
       setIsLoading(false);
@@ -21,9 +20,9 @@ const useFetchData = (fetchFunction) => {
 
   useEffect(() => {
     fetchData();
-  }, [fetchFunction]); // Chạy khi fetchFunction thay đổi
+  }, [fetchFunction]);
 
-  return { data, isLoading, error };
+  return { data, isLoading, error, refetch: fetchData };
 };
 
 export default useFetchData;

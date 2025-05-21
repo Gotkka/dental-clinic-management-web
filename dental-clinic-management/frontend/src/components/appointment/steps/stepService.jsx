@@ -1,7 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Briefcase } from 'react-feather';
 
-const StepService = ({ services, isLoading, error, value, onChange }) => {
+const StepService = ({ services = [], isLoading = false, error = null, value, onChange }) => {
   if (isLoading) {
     return (
       <div className="bg-white p-6 rounded-lg shadow-sm flex justify-center">
@@ -29,7 +30,7 @@ const StepService = ({ services, isLoading, error, value, onChange }) => {
     );
   }
 
-  if (!services?.length) {
+  if (!services.length) {
     return (
       <div className="bg-white p-6 rounded-lg shadow-sm text-center text-gray-500">
         <p className="flex flex-col items-center">
@@ -49,46 +50,91 @@ const StepService = ({ services, isLoading, error, value, onChange }) => {
         <p className="text-center text-gray-500 text-sm mt-1">Vui lòng chọn dịch vụ bạn muốn</p>
       </div>
 
-      <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-        {services.map((service) => (
-          <div
-            key={service.id}
-            onClick={() => onChange(service)}
-            className={`border rounded-lg p-4 cursor-pointer transition-all hover:shadow-md flex flex-col
-              ${value?.id === service.id ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-200 hover:border-blue-300'}
-            `}
-          >
-            <div className="flex items-center">
-              <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                <Briefcase size={24} className="text-blue-500" />
-              </div>
-              <div className="ml-4 flex-1">
-                <h3 className="font-semibold text-gray-800">{service.name}</h3>
-                <p className="text-sm text-gray-600">{service.duration} phút</p>
-                <p className="text-sm font-medium text-blue-600 mt-1">
-                  {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(service.price)}
-                </p>
+      <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+        {services.map((service) => {
+          const isSelected = value?.id === service.id;
+          return (
+            <div
+              key={service.id}
+              onClick={() => onChange('service', service)}
+              className={`border rounded-lg p-4 cursor-pointer transition-all hover:shadow-md flex flex-col relative
+                ${isSelected
+                  ? 'border-blue-500 ring-2 ring-blue-200 scale-105 shadow-lg bg-blue-50'
+                  : 'border-gray-200 hover:border-blue-300 bg-white'}
+              `}
+              style={{ transition: 'all 0.2s cubic-bezier(.4,2,.6,1)' }}
+            >
+              <div className="flex items-center">
+                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                  <Briefcase size={24} className="text-blue-500" />
+                </div>
+                <div className="ml-4 flex-1">
+                  <h3 className="font-semibold text-gray-800">{service.name}</h3>
+                  <p className="text-sm text-gray-600">{service.duration} phút</p>
+                  <p className="text-sm font-medium text-blue-600 mt-1">
+                    {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(service.price)}
+                  </p>
+                </div>
+                {/* Tick xanh hiệu ứng nổi bật khi chọn */}
+                {isSelected && (
+                  <div
+                    className="absolute top-2 right-2 w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center transition-transform duration-300 scale-125 shadow-lg animate-bounce z-10"
+                    style={{ boxShadow: '0 0 0 3px #3b82f6' }}
+                  >
+                    <svg
+                      className="w-4 h-4 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                )}
               </div>
 
-              {value?.id === service.id && (
-                <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
+              {service.description && (
+                <div className="mt-3 pt-3 border-t border-gray-100">
+                  <p className="text-sm text-gray-600">{service.description}</p>
                 </div>
               )}
             </div>
-
-            {service.description && (
-              <div className="mt-3 pt-3 border-t border-gray-100">
-                <p className="text-sm text-gray-600">{service.description}</p>
-              </div>
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
+};
+
+StepService.propTypes = {
+  services: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
+      duration: PropTypes.number.isRequired,
+      price: PropTypes.number.isRequired,
+      description: PropTypes.string,
+    })
+  ),
+  isLoading: PropTypes.bool,
+  error: PropTypes.shape({
+    message: PropTypes.string,
+  }),
+  value: PropTypes.shape({
+    id: PropTypes.number,
+  }),
+  onChange: PropTypes.func.isRequired,
+};
+
+StepService.defaultProps = {
+  services: [],
+  isLoading: false,
+  error: null,
+  value: null,
 };
 
 export default StepService;

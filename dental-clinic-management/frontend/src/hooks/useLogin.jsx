@@ -3,32 +3,43 @@ import { useAuth } from '../contexts/AuthContext';
 
 const useLogin = () => {
   const { login, loading, error } = useAuth();
+
   const [formData, setFormData] = useState({
-    id: '',
     username: '',
     password: '',
     rememberMe: false,
   });
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: type === 'checkbox' ? checked : value,
-    });
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const success = await login(formData.username, formData.id, formData.password);
-    if (success) {
-      alert('Đăng nhập thành công!');
+    await login(formData.username, formData.password);
+
+    if (formData.rememberMe) {
+      localStorage.setItem('rememberedUsername', formData.username);
     } else {
-      alert(error || 'Đăng nhập thất bại!');
+      localStorage.removeItem('rememberedUsername');
     }
   };
 
-  return { formData, handleChange, handleSubmit, loading, error };
+  return {
+    formData,
+    setFormData,
+    showPassword,
+    setShowPassword,
+    handleChange,
+    handleSubmit,
+    loading,
+    error,
+  };
 };
 
 export default useLogin;

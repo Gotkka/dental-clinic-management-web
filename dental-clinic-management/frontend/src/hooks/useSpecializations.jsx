@@ -1,10 +1,9 @@
-import { specializationService } from '../services/specializationService';
+import { getSpecializations } from '../services/specializationService';
 import useFetchData from './useFetchData';
 
 const useSpecializations = () => {
-  const { data: specializations, isLoading, error } = useFetchData(specializationService);
-
-  return { specializations, isLoading, error };
+  const { data: specializations, isLoading, error, refetch } = useFetchData(getSpecializations);
+  return { specializations, isLoading, error, refetch };
 };
 
 export default useSpecializations;

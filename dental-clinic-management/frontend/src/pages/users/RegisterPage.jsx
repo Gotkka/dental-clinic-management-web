@@ -36,7 +36,6 @@ const RegisterPage = () => {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit(onRegisterSuccess)}>
-            
             {/* Username */}
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700">Tên đăng nhập</label>
@@ -112,9 +111,9 @@ const RegisterPage = () => {
                 </div>
                 <input
                   id="confirmPassword"
-                  name="confirm_password"
+                  name="confirmPassword"
                   type={showConfirmPassword ? 'text' : 'password'}
-                  value={formData.confirm_password}
+                  value={formData.confirmPassword}
                   onChange={handleInputChange}
                   className={`appearance-none block w-full pl-10 pr-3 py-2 border ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-dental-blue focus:border-dental-blue`}
                   placeholder="Nhập lại mật khẩu"
@@ -137,7 +136,6 @@ const RegisterPage = () => {
                 Đăng ký
               </button>
             </div>
-
           </form>
         </div>
       </div>

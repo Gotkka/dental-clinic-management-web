@@ -5,7 +5,7 @@ import useSpecializations from './useSpecializations';
 const useFilteredDentists = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSpecialty, setSelectedSpecialty] = useState('Tất cả');
-  const { dentists, loading: dentistsLoading, error: dentistsError } = useDentists();
+  const { dentists, isLoading: dentistsLoading, error: dentistsError } = useDentists();
   const { specializations, isLoading: specLoading, error: specError } = useSpecializations();
 
   // Gộp trạng thái loading và error
@@ -20,7 +20,7 @@ const useFilteredDentists = () => {
 
   const filteredDoctors = useMemo(() => {
     const safeSpecializations = Array.isArray(specializations) ? specializations : [];
-    return dentists.filter((doctor) => {
+    return (Array.isArray(dentists) ? dentists : []).filter((doctor) => {
       const spec = safeSpecializations.find(s => s.id === doctor.specialization_id) || null;
       const fullName = doctor.full_name?.toLowerCase() || '';
       const specName = spec?.name?.toLowerCase() || '';

@@ -9,7 +9,7 @@ const useNavbar = () => {
     if (storedUser) {
       setIsAuthenticated(true);
       const userObj = JSON.parse(storedUser);
-      if (userObj.fullName) setFullName(userObj.fullName);
+      setFullName(userObj.fullName || '');
     }
   }, []);
 

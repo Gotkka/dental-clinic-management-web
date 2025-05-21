@@ -51,9 +51,9 @@ const Navbar = () => {
 
                 {isProfileOpen && (
                   <div className="absolute top-9 right-0 w-50 bg-dental-light rounded-md shadow-lg py-0 mt-2 z-50">
-                    <Link to="/userProfile" className="block px-4 py-2 black-text-link hover:bg-gray-100">Hồ sơ cá nhân</Link>
+                    {/* <Link to="/userProfile" className="block px-4 py-2 black-text-link hover:bg-gray-100">Hồ sơ cá nhân</Link> */}
                     <Link to="/appointments" className="block px-4 py-2 black-text-link hover:bg-gray-100">Lịch hẹn của tôi</Link>
-                    <Link to="/medical-records" className="block px-4 py-2 black-text-link hover:bg-gray-100">Hồ sơ y tế</Link>
+                    {/* <Link to="/medical-records" className="block px-4 py-2 black-text-link hover:bg-gray-100">Hồ sơ y tế</Link> */}
                     <button onClick={handleLogout} className="w-full my-global-btn text-left px-4 py-2 text-white">
                       <div className="flex items-center">
                         <FaSignOutAlt className="mr-2" />

@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 const StepPatientInfo = ({ appointmentData = {}, patients = [], onChange, setPatientId }) => {
   const [localError, setLocalError] = useState(null);
 
-  // Kiểm tra appointmentData
   useEffect(() => {
     if (!appointmentData) {
       setLocalError('Lỗi: Dữ liệu bệnh nhân không khả dụng.');
@@ -13,7 +12,6 @@ const StepPatientInfo = ({ appointmentData = {}, patients = [], onChange, setPat
     }
   }, [appointmentData]);
 
-  // Tự động lấy patientId từ patients dựa trên user_id
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user')) || {};
     if (user.id && patients.length > 0 && !appointmentData?.patientId) {
@@ -26,12 +24,7 @@ const StepPatientInfo = ({ appointmentData = {}, patients = [], onChange, setPat
 
   const onInputChange = (e) => {
     const { name, value } = e.target;
-    onChange({
-      target: {
-        name,
-        value,
-      },
-    });
+    onChange(name, value);
   };
 
   return (
@@ -47,6 +40,7 @@ const StepPatientInfo = ({ appointmentData = {}, patients = [], onChange, setPat
         {localError && (
           <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-lg">{localError}</div>
         )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div>
             <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">

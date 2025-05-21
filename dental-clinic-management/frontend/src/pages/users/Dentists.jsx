@@ -14,7 +14,7 @@ const Dentists = () => {
     loading,
     error,
     specialtyNames,
-    filteredDoctors,
+    filteredDoctors = [],
   } = useFilteredDentists();
 
   return (

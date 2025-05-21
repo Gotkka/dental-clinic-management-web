@@ -1,43 +1,50 @@
 import { useState } from 'react';
 import validateRegisterForm from '../utils/validateRegisterForm';
+import { registerUser } from '../services/userService'; 
+import { useNavigate } from 'react-router-dom';
 
 const useRegisterForm = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    full_name: '',
-    email: '',
-    phone_number: '',
     username: '',
+    email: '',
     password: '',
     confirmPassword: '',
-    gender: '',
-    birth_date: '',
-    address: '',
-    agreeTerms: false,
   });
 
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState({}); 
 
   const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: value,
     }));
   };
 
-  const handleSubmit = (onSuccess) => (e) => {
+  const handleSubmit = (onSuccess) => async (e) => {
     e.preventDefault();
     const validationErrors = validateRegisterForm(formData);
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      onSuccess(formData);
+      try {
+        const response = await registerUser(formData);
+        onSuccess(response.data);
+        navigate('/login')
+      } catch (error) {
+        setErrors({
+          api: error.response?.data?.error || 'Đã có lỗi xảy ra khi đăng ký',
+        });
+      }
     }
   };
 
   return {
     formData,
+    setFormData,
     errors,
+    setErrors,
     handleInputChange,
     handleSubmit,
   };
